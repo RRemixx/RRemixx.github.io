@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>LCJS Toy Chart</title>
+  <!-- Load LightningChart JS from CDN -->
+  <script src="https://unpkg.com/lightningchart-js@3.1.0/dist/lightningchart.standalone.js"></script>
+  <style>
+    html, body { margin: 0; height: 100%; }
+    #chart { width: 100%; height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="chart"></div>
+  <script type="module">
+    import lcjs from 'https://unpkg.com/lightningchart-js@3.1.0/dist/lightningchart.standalone.mjs';
+    const { lightningChart, Themes } = lcjs;
+    // Create a simple line chart
+    const chart = lightningChart().ChartXY({ container: 'chart', theme: Themes.light });
+    const series = chart.addLineSeries();
+    // Generate random data
+    const data = Array.from({ length: 50 }, (_, i) => ({ x: i, y: Math.random() * 100 }));
+    series.add(data);
+  </script>
+</body>
+</html>
