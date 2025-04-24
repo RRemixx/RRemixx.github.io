@@ -1,27 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>LCJS Toy Chart</title>
-  <!-- Load LightningChart JS from CDN -->
-  <script src="https://unpkg.com/lightningchart-js@3.1.0/dist/lightningchart.standalone.js"></script>
+  <title>Interactive Plotly.js Example</title>
+  <!-- Plotly.js CDN (Fastly) -->
+  <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script> <!-- :contentReference[oaicite:1]{index=1} -->
   <style>
-    html, body { margin: 0; height: 100%; }
-    #chart { width: 100%; height: 100vh; }
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    #chart { width: 100%; height: 500px; }
+    #controls { margin-top: 1em; }
+    button { padding: 0.5em 1em; }
   </style>
 </head>
 <body>
-    <h1>Dynamic Data Visualization with LightningChart JS</h1>
+
+  <h1>Interactive Plotly.js Line Chart</h1>
   <div id="chart"></div>
-  <script type="module">
-    import lcjs from 'https://unpkg.com/lightningchart-js@3.1.0/dist/lightningchart.standalone.mjs';
-    const { lightningChart, Themes } = lcjs;
-    // Create a simple line chart
-    const chart = lightningChart().ChartXY({ container: 'chart', theme: Themes.light });
-    const series = chart.addLineSeries();
-    // Generate random data
-    const data = Array.from({ length: 50 }, (_, i) => ({ x: i, y: Math.random() * 100 }));
-    series.add(data);
+  <div id="controls">
+    <button id="addPoint">Add Random Point</button>
+  </div>
+
+  <script>
+    // Initial data arrays
+    let xData = Array.from({ length: 20 }, (_, i) => i);                      // :contentReference[oaicite:2]{index=2}
+    let yData = xData.map(() => Math.random() * 10);
+
+    // Define the trace for line + markers
+    const trace = {
+      x: xData,
+      y: yData,
+      mode: 'lines+markers',
+      name: 'Random Series',
+      marker: { size: 8 },
+      line: { shape: 'spline' }
+    };
+
+    // Layout with interactive config: scrollZoom enables mousewheel zooming
+    const layout = {
+      title: 'Zoom, Pan, Hover & Click Events',
+      hovermode: 'closest',
+      xaxis: { title: 'X Axis' },
+      yaxis: { title: 'Y Axis' }
+    };
+
+    // Configuration: enable scroll zoom and display mode bar
+    const config = { scrollZoom: true, displayModeBar: true };              // :contentReference[oaicite:3]{index=3}
+
+    // Render the plot
+    Plotly.newPlot('chart', [trace], layout, config);                      // :contentReference[oaicite:4]{index=4}
+
+    // Add hover event listener
+    document.getElementById('chart')
+      .on('plotly_hover', data => {
+        const pt = data.points[0];
+        console.log(`Hovered at x=${pt.x}, y=${pt.y}`);                   // :contentReference[oaicite:5]{index=5}
+      });
+
+    // Add click event listener
+    document.getElementById('chart')
+      .on('plotly_click', data => {
+        const pt = data.points[0];
+        alert(`Clicked point at (${pt.x}, ${pt.y.toFixed(2)})`);           // :contentReference[oaicite:6]{index=6}
+      });
+
+    // Button to append a new random data point
+    document.getElementById('addPoint').addEventListener('click', () => {
+      const nextX = xData.length;
+      const nextY = Math.random() * 10;
+      Plotly.extendTraces('chart', {
+        x: [[nextX]],
+        y: [[nextY]]
+      }, [0]);                                                            // :contentReference[oaicite:7]{index=7}
+      xData.push(nextX); yData.push(nextY);
+    });
   </script>
+
 </body>
 </html>
