@@ -15,21 +15,22 @@
     .controls label { cursor: pointer; display: flex; align-items: center; gap: 5px; }
     .container { display: flex; gap: 15px; }
     .plot, .quantilePlot { flex: 1; height: 450px; }
-    .info { width: 240px; line-height: 1.4; }
+    .info { width: 260px; line-height: 1.4; }
     .info dl { margin: 0; }
     .info dt { font-weight: bold; margin-top: 8px; }
     input[type="range"], input[type="number"] { width: 70px; }
-    #covVal { width: 40px; text-align: center; }
+    #covVal, #calibVal, #testVal, #ratioVal { width: 40px; text-align: center; }
   </style>
 </head>
 <body>
-  <h1>Split Conformal Prediction Interactive Demo<br>(Finite Sample, Fixed Seed)</h1>
+  <h1>Split Conformal Prediction Demo<br>(Finite Sample, Fixed Seed)</h1>
 
   <div class="controls">
     <label>Total points:<input id="numPoints" type="number" min="20" max="500" value="100"></label>
     <label>Calib proportion:<input id="calibProp" type="range" min="0.1" max="0.8" step="0.05" value="0.4"><span id="calibVal">40%</span></label>
     <label>Test proportion:<input id="testProp" type="range" min="0.1" max="0.8" step="0.05" value="0.4"><span id="testVal">40%</span></label>
-    <label>Variance:<input id="varianceLevel" type="range" min="0" max="1" step="0.05" value="0.5"></label>
+    <label>Var (train/calib):<input id="varianceLevel" type="range" min="0" max="1" step="0.05" value="0.5"></label>
+    <label>Test variance ratio:<input id="varianceRatio" type="range" min="0.1" max="2" step="0.1" value="1"><span id="ratioVal">1.0</span></label>
     <label>Coverage:<input id="coverageRate" type="range" min="0" max="1" step="0.01" value="0.9"><span id="covVal">90%</span></label>
     <label>Font size:<input id="fontSize" type="range" min="12" max="24" step="1" value="16"></label>
     <label><input id="showTrain" type="checkbox" checked>Training</label>
@@ -46,7 +47,9 @@
         <dt>Train n:</dt><dd id="infoNT">--</dd>
         <dt>Calib n:</dt><dd id="infoNC">--</dd>
         <dt>Test n:</dt><dd id="infoNTt">--</dd>
-        <dt>Variance:</dt><dd id="infoVar">--</dd>
+        <dt>Var (train/calib):</dt><dd id="infoVar">--</dd>
+        <dt>Var ratio:</dt><dd id="infoRatio">--</dd>
+        <dt>Var (test):</dt><dd id="infoVarT">--</dd>
         <dt>Coverage:</dt><dd id="infoCov">--%</dd>
         <dt>Half-width:</dt><dd id="infoQ">--</dd>
         <dt>Test cov:</dt><dd id="infoTestCov">--%</dd>
@@ -56,11 +59,11 @@
 
   <script>
     Math.seedrandom('fixed-seed-42');
-    
+
     function generateData(n, varLevel) {
       const X = Array.from({length: n}, () => Math.random() * 10);
       const noise = X.map(x => (1 + varLevel * x) * (Math.random() * 2 - 1));
-      const y = X.map((x, i) => 3 * x + noise[i]);
+      const y = X.map((x,i) => 3 * x + noise[i]);
       return { X, y };
     }
 
@@ -74,119 +77,102 @@
 
     function render() {
       Math.seedrandom('fixed-seed-42');
-
       const n = +document.getElementById('numPoints').value;
       const calibProp = +document.getElementById('calibProp').value;
       const testProp = +document.getElementById('testProp').value;
       const varLevel = +document.getElementById('varianceLevel').value;
+      const varRatio = +document.getElementById('varianceRatio').value;
+      const varTest = varLevel * varRatio;
       const covRate = +document.getElementById('coverageRate').value;
       const fontSize = +document.getElementById('fontSize').value;
       const showT = document.getElementById('showTrain').checked;
       const showC = document.getElementById('showCalib').checked;
       const showX = document.getElementById('showTest').checked;
 
-      document.getElementById('covVal').textContent = (covRate * 100).toFixed(0) + '%';
-      document.getElementById('calibVal').textContent = (calibProp * 100).toFixed(0) + '%';
-      document.getElementById('testVal').textContent = (testProp * 100).toFixed(0) + '%';
-      document.body.style.fontSize = fontSize + 'px';
+      document.getElementById('covVal').textContent = (covRate*100).toFixed(0)+'%';
+      document.getElementById('calibVal').textContent = (calibProp*100).toFixed(0)+'%';
+      document.getElementById('testVal').textContent = (testProp*100).toFixed(0)+'%';
+      document.getElementById('ratioVal').textContent = varRatio.toFixed(1);
+      document.body.style.fontSize = fontSize+'px';
 
-      // Generate full data and random split
-      const full = generateData(n, varLevel);
-      const idxs = Array.from(Array(n).keys());
-      for (let i = n - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [idxs[i], idxs[j]] = [idxs[j], idxs[i]];
-      }
-      const nCal = Math.floor(calibProp * n);
-      const nTest = Math.floor(testProp * n);
-      const nTrain = n - nCal - nTest;
+      // Generate train+calib then split
+      const totalTrainCalib = n - Math.floor(testProp*n);
+      const combined = generateData(totalTrainCalib, varLevel);
+      const idxs = Array.from(combined.X.keys()).sort(() => Math.random()-0.5);
+      const nCal = Math.floor(calibProp * totalTrainCalib);
+      const trainIdx = idxs.slice(0, totalTrainCalib - nCal);
+      const calibIdx = idxs.slice(totalTrainCalib - nCal);
+      const Xtrain = trainIdx.map(i=>combined.X[i]), yTrain = trainIdx.map(i=>combined.y[i]);
+      const Xcal = calibIdx.map(i=>combined.X[i]), yCal = calibIdx.map(i=>combined.y[i]);
 
-      const trainIdx = idxs.slice(0, nTrain);
-      const calibIdx = idxs.slice(nTrain, nTrain + nCal);
-      const testIdx = idxs.slice(nTrain + nCal);
+      // Test data
+      const nTest = Math.floor(testProp*n);
+      const testData = generateData(nTest, varTest);
+      const Xtest = testData.X, yTest = testData.y;
 
-      const Xtrain = trainIdx.map(i => full.X[i]);
-      const yTrain = trainIdx.map(i => full.y[i]);
-      const Xcal = calibIdx.map(i => full.X[i]);
-      const yCal = calibIdx.map(i => full.y[i]);
-      const Xtest = testIdx.map(i => full.X[i]);
-      const yTest = testIdx.map(i => full.y[i]);
+      // Fit model
+      const Xmean = Xtrain.reduce((a,b)=>a+b)/Xtrain.length;
+      const ymean = yTrain.reduce((a,b)=>a+b)/yTrain.length;
+      const slope = Xtrain.map((x,i)=> (x-Xmean)*(yTrain[i]-ymean)).reduce((a,b)=>a+b)
+                    /Xtrain.map(x=> (x-Xmean)**2).reduce((a,b)=>a+b);
+      const intercept = ymean - slope*Xmean;
 
-      // Fit OLS
-      const Xmean = Xtrain.reduce((a, b) => a + b) / Xtrain.length;
-      const ymean = yTrain.reduce((a, b) => a + b) / yTrain.length;
-      const slope = Xtrain.map((x, i) => (x - Xmean) * (yTrain[i] - ymean)).reduce((a, b) => a + b)
-                    / Xtrain.map(x => (x - Xmean) ** 2).reduce((a, b) => a + b);
-      const intercept = ymean - slope * Xmean;
-
-      // Residuals and threshold
-      const resCal = yCal.map((y, i) => Math.abs(y - (slope * Xcal[i] + intercept)));
+      // Residuals
+      const resCal = yCal.map((yt,i)=>Math.abs(yt-(slope*Xcal[i]+intercept)));
       const q = finiteQuantile(resCal, covRate);
 
       // Axis
-      const allX = full.X;
-      const xMin = Math.min(...allX), xMax = Math.max(...allX);
-      const xLine = Array.from({length: 100}, (_, i) => xMin + i/99 * (xMax - xMin));
-      const yFit = xLine.map(x => slope * x + intercept);
+      const allX = combined.X.concat(Xtest);
+      const xMin=Math.min(...allX), xMax=Math.max(...allX);
+      const xLine=Array.from({length:100},(_,i)=>xMin+i/99*(xMax-xMin));
+      const yFit=xLine.map(x=>slope*x+intercept);
 
-      // Classify points
-      const coveredCal = [], uncoveredCal = [];
-      yCal.forEach((y, i) => (Math.abs(y - (slope * Xcal[i] + intercept)) <= q ? coveredCal : uncoveredCal).push({x: Xcal[i], y}));
-      const coveredTest = [], uncoveredTest = [];
-      yTest.forEach((y, i) => (Math.abs(y - (slope * Xtest[i] + intercept)) <= q ? coveredTest : uncoveredTest).push({x: Xtest[i], y}));
-      const testCov = coveredTest.length / yTest.length;
+      // Classify
+      const coveredCal=[], uncoveredCal=[];
+      yCal.forEach((yt,i)=>(Math.abs(yt-(slope*Xcal[i]+intercept))<=q?coveredCal:uncoveredCal).push({x:Xcal[i],y:yt}));
+      const coveredTest=[],uncoveredTest=[];
+      yTest.forEach((yt,i)=>(Math.abs(yt-(slope*Xtest[i]+intercept))<=q?coveredTest:uncoveredTest).push({x:Xtest[i],y:yt}));
+      const testCov=coveredTest.length/yTest.length;
 
-      // Main plot
-      const traces = [
-        {x: xLine, y: yFit.map(v => v + q), mode: 'lines', line: {color: 'transparent'}, showlegend: false},
-        {x: xLine, y: yFit.map(v => v - q), mode: 'lines', fill: 'tonexty', fillcolor: 'rgba(150,150,150,0.7)', line: {color: 'transparent'}, showlegend: false},
-        {x: xLine, y: yFit, mode: 'lines', line: {color: '#D4AF37', width: 2}, name: 'Regression Fit'}
+      // Plot
+      const traces=[
+        {x:xLine,y:yFit.map(v=>v+q),mode:'lines',line:{color:'transparent'},showlegend:false},
+        {x:xLine,y:yFit.map(v=>v-q),mode:'lines',fill:'tonexty',fillcolor:'rgba(150,150,150,0.7)'},
+        {x:xLine,y:yFit,mode:'lines',line:{color:'#D4AF37',width:2},name:'Regression Fit'}
       ];
-      if (showT) traces.push({x: Xtrain, y: yTrain, mode: 'markers', marker: {color: '#333', size: 8}, name: 'Training'});
-      if (showC) {
-        traces.push({x: coveredCal.map(p => p.x), y: coveredCal.map(p => p.y), mode: 'markers', marker: {color: 'green', size: 8}, name: 'Calib Covered'});
-        traces.push({x: uncoveredCal.map(p => p.x), y: uncoveredCal.map(p => p.y), mode: 'markers', marker: {color: 'red', size: 8}, name: 'Calib Uncovered'});
+      if(showT) traces.push({x:Xtrain,y:yTrain,mode:'markers',marker:{color:'#333',size:8},name:'Training'});
+      if(showC){traces.push({x:coveredCal.map(p=>p.x),y:coveredCal.map(p=>p.y),mode:'markers',marker:{color:'green',size:8},name:'Calib Covered'});
+        traces.push({x:uncoveredCal.map(p=>p.x),y:uncoveredCal.map(p=>p.y),mode:'markers',marker:{color:'red',size:8},name:'Calib Uncovered'});
       }
-      if (showX) {
-        traces.push({x: coveredTest.map(p => p.x), y: coveredTest.map(p => p.y), mode: 'markers', marker: {symbol: 'diamond', color: '#2ca02c', size: 8}, name: 'Test Covered'});
-        traces.push({x: uncoveredTest.map(p => p.x), y: uncoveredTest.map(p => p.y), mode: 'markers', marker: {symbol: 'diamond', color: '#d62728', size: 8}, name: 'Test Uncovered'});
+      if(showX){traces.push({x:coveredTest.map(p=>p.x),y:coveredTest.map(p=>p.y),mode:'markers',marker:{symbol:'diamond',color:'#2ca02c',size:8},name:'Test Covered'});
+        traces.push({x:uncoveredTest.map(p=>p.x),y:uncoveredTest.map(p=>p.y),mode:'markers',marker:{symbol:'diamond',color:'#d62728',size:8},name:'Test Uncovered'});
       }
-      Plotly.newPlot('plot', traces, {
-        template: 'plotly_white', font: {family: 'Segoe UI', size: fontSize},
-        xaxis: {title: 'X', titlefont: {size: fontSize}, tickfont: {size: fontSize * 0.8}},
-        yaxis: {title: 'Y', titlefont: {size: fontSize}, tickfont: {size: fontSize * 0.8}},
-        legend: {orientation: 'h', x: 0.5, xanchor: 'center', y: 1.1, font: {size: fontSize * 0.8}},
-        margin: {t: 30, l: 50, b: 50}
-      });
+      Plotly.newPlot('plot',traces,{template:'plotly_white',font:{family:'Segoe UI',size:fontSize},xaxis:{title:'X'},yaxis:{title:'Y'},legend:{orientation:'h',x:0.5,xanchor:'center',y:1.1},margin:{t:30,l:50,b:50}});
 
-      // Quantile plot
-      const sorted = resCal.slice().sort((a, b) => a - b);
-      const levelsArr = sorted.map((_, i) => (i + 1) / sorted.length);
-      const quantTraces = [
-        {x: levelsArr, y: sorted, mode: 'lines+markers', line: {color: '#1f77b4', width: 2}, name: 'Empirical Quantile'},
-        {x: [covRate], y: [q], mode: 'markers', marker: {color: '#d62728', size: fontSize * 0.7}, name: 'Selected Quantile'}
+      // Quantile function
+      const sorted=resCal.slice().sort((a,b)=>a-b);
+      const levelsArr=sorted.map((_,i)=>(i+1)/sorted.length);
+      const quantTraces=[
+        {x:levelsArr,y:sorted,mode:'lines+markers',line:{color:'#1f77b4',width:2},name:'Empirical Quantile'},
+        {x:[covRate],y:[q],mode:'markers',marker:{color:'#d62728',size:fontSize*0.7},name:'Selected Quantile'}
       ];
-      Plotly.newPlot('quantilePlot', quantTraces, {
-        template: 'plotly_white', font: {family: 'Segoe UI', size: fontSize},
-        xaxis: {title: 'Coverage level', titlefont: {size: fontSize}, tickfont: {size: fontSize * 0.8}},
-        yaxis: {title: 'Quantile', titlefont: {size: fontSize}, tickfont: {size: fontSize * 0.8}},
-        legend: {orientation: 'h', x: 0.5, xanchor: 'center', y: 1.1, font: {size: fontSize * 0.8}},
-        margin: {t: 30, l: 50, b: 50}
-      });
+      Plotly.newPlot('quantilePlot',quantTraces,{template:'plotly_white',font:{family:'Segoe UI',size:fontSize},xaxis:{title:'Coverage level'},yaxis:{title:'Quantile'},legend:{orientation:'h',x:0.5,xanchor:'center',y:1.1},margin:{t:30,l:50,b:50}});
 
-      // Update info
-      document.getElementById('infoN').textContent = n;
-      document.getElementById('infoNT').textContent = nTrain;
-      document.getElementById('infoNC').textContent = nCal;
-      document.getElementById('infoNTt').textContent = nTest;
-      document.getElementById('infoVar').textContent = varLevel.toFixed(2);
-      document.getElementById('infoCov').textContent = `${(covRate*100).toFixed(0)}%`;
-      document.getElementById('infoQ').textContent = q.toFixed(2);
-      document.getElementById('infoTestCov').textContent = `${(testCov*100).toFixed(1)}%`;
+      // Info
+      document.getElementById('infoN').textContent=n;
+      document.getElementById('infoNT').textContent=(n-nCal-nTest);
+      document.getElementById('infoNC').textContent=nCal;
+      document.getElementById('infoNTt').textContent=nTest;
+      document.getElementById('infoVar').textContent=varLevel.toFixed(2);
+      document.getElementById('infoRatio').textContent=varRatio.toFixed(1);
+      document.getElementById('infoVarT').textContent=varTest.toFixed(2);
+      document.getElementById('infoCov').textContent=`${(covRate*100).toFixed(0)}%`;
+      document.getElementById('infoQ').textContent=q.toFixed(2);
+      document.getElementById('infoTestCov').textContent=`${(testCov*100).toFixed(1)}%`;
     }
 
-    ['numPoints','calibProp','testProp','varianceLevel','coverageRate','fontSize','showTrain','showCalib','showTest']
-      .forEach(id => document.getElementById(id).addEventListener('input', render));
+    ['numPoints','calibProp','testProp','varianceLevel','varianceRatio','coverageRate','fontSize','showTrain','showCalib','showTest']
+      .forEach(id=>document.getElementById(id).addEventListener('input',render));
     render();
   </script>
 </body>
