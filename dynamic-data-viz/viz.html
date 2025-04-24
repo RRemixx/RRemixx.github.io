@@ -1,79 +1,137 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Interactive Plotly.js Example</title>
-  <!-- Plotly.js CDN (Fastly) -->
-  <script src="https://cdn.plot.ly/plotly-3.0.1.min.js" charset="utf-8"></script> <!-- :contentReference[oaicite:1]{index=1} -->
+  <meta charset="UTF-8">
+  <title>Split Conformal Prediction Demo</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2em; }
-    #chart { width: 100%; height: 500px; }
-    #controls { margin-top: 1em; }
-    button { padding: 0.5em 1em; }
+    body { font-family: 'Segoe UI', sans-serif; margin: 20px; }
+    h1 { text-align: center; font-size: 1.5em; margin-bottom: 10px; }
+    .controls { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; font-size: 0.95em; }
+    .controls label { cursor: pointer; }
+    .container { display: flex; gap: 15px; }
+    .plot, .quantilePlot { flex: 1; height: 450px; }
+    .info { width: 160px; font-size: 0.9em; line-height: 1.4; }
+    .info dl { margin: 0; }
+    .info dt { font-weight: bold; }
   </style>
 </head>
 <body>
+  <h1>Split Conformal Prediction Interactive Demo</h1>
+  <div class="controls">
+    <label>Coverage:<input id="coverageRate" type="number" min="50" max="99" value="90" step="1">%</label>
+    <label><input id="showTrain" type="checkbox" checked>Training</label>
+    <label><input id="showCalib" type="checkbox" checked>Calibration</label>
+  </div>
 
-  <h1>Interactive Plotly.js Line Chart</h1>
-  <div id="chart"></div>
-  <div id="controls">
-    <button id="addPoint">Add Random Point</button>
+  <div class="container">
+    <div id="plot" class="plot"></div>
+    <div id="quantilePlot" class="quantilePlot"></div>
+    <div id="info" class="info">
+      <dl>
+        <dt>Coverage rate:</dt><dd id="infoCov">--%</dd>
+        <dt>Interval half-width:</dt><dd id="infoQ">--</dd>
+      </dl>
+    </div>
   </div>
 
   <script>
-    // Initial data arrays
-    let xData = Array.from({ length: 20 }, (_, i) => i);                      // :contentReference[oaicite:2]{index=2}
-    let yData = xData.map(() => Math.random() * 10);
+    // Generate synthetic data with increased variance
+    const n = 50;
+    const X = Array.from({length: n}, () => Math.random() * 10);
+    // Larger heteroscedastic noise: factor 0.5 and range [-2,2]
+    const noise = X.map(x => (1 + 0.5 * x) * (Math.random() * 4 - 2));
+    const yTrue = X.map((x,i) => 3 * x + noise[i]);
 
-    // Define the trace for line + markers
-    const trace = {
-      x: xData,
-      y: yData,
-      mode: 'lines+markers',
-      name: 'Random Series',
-      marker: { size: 8 },
-      line: { shape: 'spline' }
-    };
+    // Split data: 60% train, 40% calib
+    const idx = Array.from(X.keys());
+    idx.sort(() => Math.random() - 0.5);
+    const nTrain = Math.floor(0.6 * n);
+    const trainIdx = idx.slice(0, nTrain), calibIdx = idx.slice(nTrain);
+    const Xtrain = trainIdx.map(i => X[i]), yTrain = trainIdx.map(i => yTrue[i]);
+    const Xcal = calibIdx.map(i => X[i]), yCal = calibIdx.map(i => yTrue[i]);
 
-    // Layout with interactive config: scrollZoom enables mousewheel zooming
-    const layout = {
-      title: 'Zoom, Pan, Hover & Click Events',
-      hovermode: 'closest',
-      xaxis: { title: 'X Axis' },
-      yaxis: { title: 'Y Axis' }
-    };
+    // Fit OLS on training
+    const Xmean = Xtrain.reduce((a,b)=>a+b)/Xtrain.length;
+    const ymean = yTrain.reduce((a,b)=>a+b)/yTrain.length;
+    const slope = Xtrain.map((x,i)=> (x-Xmean)*(yTrain[i]-ymean)).reduce((a,b)=>a+b)
+                  / Xtrain.map(x=> (x-Xmean)**2).reduce((a,b)=>a+b);
+    const intercept = ymean - slope * Xmean;
 
-    // Configuration: enable scroll zoom and display mode bar
-    const config = { scrollZoom: true, displayModeBar: true };              // :contentReference[oaicite:3]{index=3}
+    // Compute calibration residuals
+    const residuals = yCal.map((y,i) => Math.abs(y - (slope * Xcal[i] + intercept)));
 
-    // Render the plot
-    Plotly.newPlot('chart', [trace], layout, config);                      // :contentReference[oaicite:4]{index=4}
+    // Grid for prediction band
+    const xLine = Array.from({length:100},(_,i)=> Math.min(...X) + i/99*(Math.max(...X)-Math.min(...X)));
+    const yFitLine = xLine.map(x=> slope * x + intercept);
 
-    // Add hover event listener
-    document.getElementById('chart')
-      .on('plotly_hover', data => {
-        const pt = data.points[0];
-        console.log(`Hovered at x=${pt.x}, y=${pt.y}`);                   // :contentReference[oaicite:5]{index=5}
+    // Quantile helper
+    function quantile(arr, q) {
+      const s = arr.slice().sort((a,b)=>a-b);
+      const idx = Math.ceil(s.length * q) - 1;
+      return s[Math.max(0, Math.min(idx, s.length-1))];
+    }
+
+    // Render plots
+    function render(rate) {
+      const covRate = rate;
+      const q = quantile(residuals, covRate);
+      const yUpper = yFitLine.map(v=> v + q), yLower = yFitLine.map(v=> v - q);
+
+      // Identify covered vs uncovered calib points
+      const coveredX = [], coveredY = [], uncoveredX = [], uncoveredY = [];
+      yCal.forEach((y,i) => {
+        if (Math.abs(y - (slope * Xcal[i] + intercept)) <= q) {
+          coveredX.push(Xcal[i]); coveredY.push(y);
+        } else {
+          uncoveredX.push(Xcal[i]); uncoveredY.push(y);
+        }
       });
 
-    // Add click event listener
-    document.getElementById('chart')
-      .on('plotly_click', data => {
-        const pt = data.points[0];
-        alert(`Clicked point at (${pt.x}, ${pt.y.toFixed(2)})`);           // :contentReference[oaicite:6]{index=6}
+      // Main plot with darker interval shading
+      const mainTraces = [
+        {x:xLine, y:yUpper, mode:'lines', line:{color:'transparent'}, showlegend:false},
+        {x:xLine, y:yLower, mode:'lines', fill:'tonexty', fillcolor:'rgba(200,200,200,0.7)', line:{color:'transparent'}, showlegend:false},
+        {x:xLine, y:yFitLine, mode:'lines', line:{color:'#D4AF37'}, name:'Regression Fit'},
+        ...(document.getElementById('showTrain').checked ? [{x:Xtrain,y:yTrain,mode:'markers',marker:{color:'#333',size:6},name:'Training'}] : []),
+        ...(document.getElementById('showCalib').checked ? [
+          {x:coveredX,y:coveredY,mode:'markers',marker:{color:'green',size:6},name:'Calib Covered'},
+          {x:uncoveredX,y:uncoveredY,mode:'markers',marker:{color:'red',size:6},name:'Calib Uncovered'}
+        ] : [])
+      ];
+      Plotly.newPlot('plot', mainTraces, {
+        template:'plotly_white', font:{family:'Segoe UI',size:12},
+        xaxis:{title:'X'}, yaxis:{title:'Y'},
+        legend:{orientation:'h',x:0.5,xanchor:'center',y:1.1}, margin:{t:30,l:40,r:10,b:40}
       });
 
-    // Button to append a new random data point
-    document.getElementById('addPoint').addEventListener('click', () => {
-      const nextX = xData.length;
-      const nextY = Math.random() * 10;
-      Plotly.extendTraces('chart', {
-        x: [[nextX]],
-        y: [[nextY]]
-      }, [0]);                                                            // :contentReference[oaicite:7]{index=7}
-      xData.push(nextX); yData.push(nextY);
-    });
+      // Quantile function plot remains unchanged
+      const sorted = residuals.slice().sort((a,b)=>a-b);
+      const levels = sorted.map((_,i)=> (i+1)/sorted.length);
+      const quantTraces = [
+        {x:levels,y:sorted,mode:'lines+markers',line:{color:'#1f77b4'},name:'Empirical Quantile', hovertemplate:'Coverage: %{x:.2f}<br>q: %{y:.2f}'},
+        {x:[covRate],y:[q],mode:'markers',marker:{color:'#d62728',size:10},name:'Selected Quantile', hovertemplate:`Coverage: ${covRate.toFixed(2)}<br>q: ${q.toFixed(2)}`}
+      ];
+      Plotly.newPlot('quantilePlot', quantTraces, {
+        template:'plotly_white', font:{family:'Segoe UI',size:12},
+        xaxis:{title:'Coverage level (1−α)'}, yaxis:{title:'Quantile q(1−α)'},
+        legend:{orientation:'h',x:0.5,xanchor:'center',y:1.1}, margin:{t:30,l:40,r:10,b:40}
+      });
+
+      // Info panel update
+      document.getElementById('infoCov').textContent = `${(covRate*100).toFixed(0)}%`;
+      document.getElementById('infoQ').textContent = q.toFixed(2);
+    }
+
+    ['coverageRate','showTrain','showCalib'].forEach(id =>
+      document.getElementById(id).addEventListener('input', () =>
+        render(document.getElementById('coverageRate').value/100)
+      )
+    );
+    render(document.getElementById('coverageRate').value/100);
   </script>
-
 </body>
 </html>
+```
+
