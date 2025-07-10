@@ -1,0 +1,415 @@
+/* Import Google Fonts (if not already in HTML) - Best to put this at the very top */
+/* @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap'); */
+
+/* Global Reset & Base Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans', sans-serif; /* Body text font */
+    line-height: 1.6;
+    background-color: #f0f2f5; /* Light grey fallback background */
+
+    /* Background Image Properties */
+    background-image: url('images/background.jpg');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    /* Initial state for fade-in animation */
+    opacity: 0;
+    transition: opacity 1s ease-out; /* Smooth transition for fade-in */
+}
+
+/* State when body is fully loaded */
+body.loaded {
+    opacity: 1;
+}
+
+/* State when body is loading (can add initial transformations if desired) */
+body.loading {
+    /* Optional: Hide or translate content slightly off-screen initially */
+}
+
+
+/* Enhancements for better appearance on top of background image */
+html {
+    scroll-behavior: smooth; /* Smooth scrolling for anchor links */
+}
+
+/* Default Link Styling */
+a {
+    color: #007bff; /* Standard link color */
+    text-decoration: none;
+    transition: color 0.3s ease-in-out; /* Smooth transition for link hover */
+    text-shadow: none; /* Default: no text shadow on links */
+}
+
+a:hover {
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline;
+}
+
+/* Main Content Wrapper (transparent and just holds layout) */
+.container {
+    max-width: 960px; /* Overall width */
+    margin: 40px auto; /* Centered with vertical margin */
+    background: transparent; /* Main container is fully transparent */
+    padding: 0; /* No padding on the main container itself, sections will have padding */
+    border-radius: 12px;
+    box-shadow: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px; /* Space between sidebar and main-content columns */
+}
+
+/* --- SIDEBAR STYLING - FULLY TRANSPARENT AND CONTAINS MERGED INTRO --- */
+.sidebar {
+    flex: 1;
+    min-width: 250px;
+    padding: 30px; /* Keep padding for internal spacing */
+    background: transparent; /* Make sidebar fully transparent */
+    border-radius: 12px; /* Keep border-radius for aesthetic */
+    box-shadow: none; /* Remove shadow */
+    backdrop-filter: none; /* Remove blur effect */
+    -webkit-backdrop-filter: none;
+
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    align-items: center; /* Center align items initially */
+    text-align: center; /* Center text initially */
+    margin-bottom: 0;
+
+    /* IMPORTANT: Text colors and shadows for readability on transparent sidebar */
+    color: white; /* Example: White text for dark backgrounds */
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9); /* Stronger shadow for readability */
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover transition */
+}
+.sidebar:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+}
+
+/* Adjust layout for longer text in sidebar on wider screens */
+@media (min-width: 769px) {
+    .sidebar {
+        align-items: flex-start; /* Align text to start on wider screens */
+        text-align: left; /* Align text to left on wider screens */
+        padding-right: 20px; /* Add some right padding */
+    }
+}
+
+
+/* Adjust links within the transparent sidebar */
+.sidebar a {
+    color: #00ffff; /* Bright link color for sidebar */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+.sidebar a:hover {
+    color: #00bfff;
+}
+
+/* Headings within the transparent sidebar */
+.sidebar h1 { /* Targeting the new H1 in sidebar */
+    color: white; /* White for main name */
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.9);
+    font-size: 2.8em; /* Match main H1 size */
+    margin-bottom: 25px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+.sidebar h2 { /* Targeting the smaller H2 in sidebar (Ruipu Li) */
+    color: white; /* White for name */
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.9);
+    font-size: 2.2em; /* Slightly smaller for hierarchy */
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+.sidebar p { /* Paragraphs within sidebar */
+    margin-bottom: 1em;
+}
+/* ---------------------------------------------------------------------- */
+
+
+/* Profile Picture Placeholder/Container (Adjust background for transparency) */
+.profile-pic {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2); /* Very subtle semi-transparent white */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5em;
+    color: #b0b0b0; /* Placeholder text color */
+    margin-bottom: 25px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* Keep shadow for definition */
+}
+
+/* Actual Profile Image Styling (if you use an <img> tag) */
+.profile-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+/* Main Content Area Styling (now just a wrapper for sections) */
+.main-content {
+    flex: 3;
+    min-width: 450px;
+    display: flex;
+    flex-direction: column; /* Stack sections vertically */
+    gap: 20px; /* Space between each individual section container */
+}
+
+/* Default Section Styling (semi-transparent) */
+.section {
+    /* Adjusted transparency */
+    background: rgba(255, 255, 255, 0.65); /* More transparent background (was 0.85) */
+    padding: 30px; /* Keep outer padding for the frosted glass container */
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Soft, subtle shadow */
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    margin-bottom: 0;
+    color: #333; /* Default text color for these sections */
+    text-shadow: none; /* No text shadow needed on these solid backgrounds */
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover transition */
+}
+.section:hover {
+    transform: translateY(-5px); /* Slight lift on hover */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); /* Deeper shadow on hover */
+}
+
+
+/* --- Collapsible Section Styling --- */
+.collapsible-section {
+    padding: 0px; /* Remove general padding, handled by inner elements for collapsed state */
+}
+
+.collapsible-header {
+    cursor: pointer;
+    /* Adjusted padding to make collapsed boxes smaller */
+    padding: 15px 30px; /* Smaller vertical padding for compact collapsed state */
+    display: flex;
+    justify-content: flex-start; /* No longer space-between since + is removed */
+    align-items: center;
+    border-bottom: 2px solid #e0e0e0; /* Border for the header */
+    margin-bottom: 0;
+    transition: background-color 0.3s ease; /* For hover effects */
+}
+.collapsible-header:hover {
+    background-color: rgba(0,0,0,0.03); /* Subtle hover background */
+}
+.collapsible-header h2 {
+    margin-bottom: 0; /* Remove h2's default margin-bottom */
+    border-bottom: none; /* Remove h2's default border */
+}
+
+/* Removed .toggle-icon related styles completely */
+
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.7s ease-in-out, padding 0.7s ease-in-out;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 30px; /* Match left/right padding of header */
+    padding-right: 30px; /* Match left/right padding of header */
+}
+
+.collapsible-content.expanded {
+    max-height: 1000px; /* A sufficiently large number to accommodate content */
+    padding-top: 15px; /* Add top padding when expanded */
+    padding-bottom: 15px; /* Add bottom padding when expanded */
+}
+/* --- END Collapsible Section Styling --- */
+
+
+/* Fully transparent sections (for CV Button, Contact) */
+.transparent-section {
+    background: transparent; /* Fully transparent background */
+    box-shadow: none; /* No shadow */
+    backdrop-filter: none; /* No blur effect */
+    -webkit-backdrop-filter: none;
+
+    /* Text colors and shadows for readability on transparent sections */
+    color: white;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.9);
+
+    transition: transform 0.3s ease, text-shadow 0.3s ease; /* Smooth hover transition */
+}
+.transparent-section:hover {
+    transform: translateY(-3px); /* Slightly less lift for transparent sections */
+    text-shadow: 1px 1px 6px rgba(0, 0, 0, 1); /* Slightly more pronounced shadow on hover */
+}
+
+/* Adjust link color and shadow for transparent sections specifically */
+.transparent-section a {
+    color: #00ffff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+.transparent-section a:hover {
+    color: #00bfff;
+}
+
+
+/* Headings Styling (default for semi-transparent sections) */
+h1, h2, h3 {
+    font-family: 'Merriweather', serif;
+    color: #2c3e50; /* Default color for headings */
+    margin-top: 0;
+    margin-bottom: 15px; /* Default margin for non-collapsible h2s */
+    text-shadow: none;
+}
+
+/* Specific H1 and H2 for transparent sections (like the new intro section) */
+.transparent-section h1 {
+    color: white;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.9);
+}
+.transparent-section h2 { /* H2 within transparent sections (like 'Contact') */
+    color: white;
+    text-shadow: 1px 1px 5px rgba(0,0,0,0.9);
+}
+
+
+/* --- Smaller Font Sizes for Section Headings (Education, Research, Hobbies) --- */
+.section h2 {
+    font-size: 1.6em;
+}
+h3 {
+    font-size: 1.2em;
+    margin-bottom: 8px; /* Maintain small margin for h3 itself */
+    color: #4a6c8e;
+}
+/* ------------------------------------------------------------------------- */
+
+
+/* Paragraphs and Lists */
+p {
+    margin-bottom: 1em;
+}
+.collapsible-content p:last-child {
+    margin-bottom: 0; /* Remove bottom margin for last paragraph in expanded content */
+}
+
+ul {
+    list-style: disc;
+    padding-left: 20px;
+    margin-bottom: 1em;
+}
+.collapsible-content ul:last-child {
+    margin-bottom: 0; /* Remove bottom margin for last list in expanded content */
+}
+
+/* Education Specific Spacing Adjustments */
+.collapsible-content li p {
+    margin-bottom: 0px; /* Make lines within an experience entry directly next to each other */
+}
+
+.collapsible-content li {
+    margin-bottom: 20px; /* Add wider interval between each experience entry */
+}
+
+.collapsible-content li:last-child {
+    margin-bottom: 0; /* Remove bottom margin for the last experience entry */
+}
+
+
+/* CV Download Link Button (its section is transparent, so button text needs shadow) */
+.cv-link {
+    display: inline-block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.95em;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 3px 8px rgba(40, 167, 69, 0.2);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Shadow for button text */
+}
+.cv-link:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+    text-decoration: none;
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+}
+.cv-link:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(40, 167, 69, 0.2);
+}
+
+/* No border for fully transparent sections' H2s */
+.transparent-section h2 {
+    border-bottom: none;
+}
+
+/* Utility class for centering content */
+.text-center {
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        margin: 20px auto;
+        padding: 0 15px;
+        gap: 20px;
+    }
+    .sidebar {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding-bottom: 25px;
+        margin-bottom: 0;
+        padding-right: 30px;
+        padding-left: 30px;
+    }
+    .main-content {
+        gap: 15px;
+    }
+    .profile-pic {
+        width: 150px;
+        height: 150px;
+    }
+    h1 {
+        font-size: 2.2em;
+    }
+    h2 {
+        font-size: 1.6em;
+    }
+    .section {
+        padding: 0px; /* No general padding on small screens either for collapsible sections */
+    }
+    /* Ensure hover effects are still smooth on touch devices (though 'hover' acts as 'tap' then) */
+    .sidebar:hover, .section:hover, .transparent-section:hover {
+        transform: none;
+        box-shadow: none;
+        text-shadow: none;
+    }
+    /* Adjust font sizes for smaller screens if needed, overriding desktop values */
+    .section h2 {
+        font-size: 1.4em;
+    }
+    h3 {
+        font-size: 1.1em;
+    }
+    /* Collapsible header padding for small screens */
+    .collapsible-header {
+        padding: 15px 25px; /* Match section padding for small screens, maintain vertical compaction */
+    }
+    .collapsible-content {
+        padding-left: 25px;
+        padding-right: 25px;
+    }
+}

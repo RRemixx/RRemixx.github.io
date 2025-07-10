@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ruipu Li's Homepage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="loading">
+    <div class="container">
+        <div class="sidebar">
+            <div class="profile-pic">
+                RL
+            </div>
+            <h1>Ruipu Li's Homepage</h1>
+            <h2>Ruipu Li</h2>
+            <p>I am a Ph.D. student in Computer Science and Engineering at the University of Michigan, where I also serve as a Graduate Student Research Assistant (GSRA).</p>
+            <p>My research centers on Artificial Intelligence, with a strong focus on time series forecasting and uncertainty quantification. I am currently advised by <a href="mailto:alrodri@umich.edu">Prof. Rodriguez (alrodri@umich.edu)</a> and previously conducted research under <a href="mailto:penner@umich.edu">Prof. Penner (penner@umich.edu)</a>. You can find my CV here: <a href="your_cv.pdf" target="_blank">CV</a></p>
+        </div>
+        <div class="main-content">
+            <div class="section collapsible-section">
+                <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="education-content">
+                    <h2>Education</h2>
+                </div>
+                <div id="education-content" class="collapsible-content">
+                    <ul>
+                        <li>
+                            <h3>University of Michigan — Ann Arbor</h3>
+                            <p>Ph.D student in Computer Science and Engineering</p>
+                            <p>Ann Arbor, MI</p>
+                            <p><em>August 2024</em> – <em>Present</em></p>
+                        </li>
+                        <li>
+                            <h3>University of Michigan — Ann Arbor</h3>
+                            <p>M.S.E in Computer Science</p>
+                            <p>Ann Arbor, MI</p>
+                            <p><em>August 2022</em> – <em>April 2024</em></p>
+                        </li>
+                        <li>
+                            <h3>University of Michigan — Ann Arbor</h3>
+                            <p>B.S in Computer Science</p>
+                            <p>Ann Arbor, MI</p>
+                            <p><em>August 2020</em> – <em>April 2022</em></p>
+                        </li>
+                        <li>
+                            <h3>Shanghai Jiao Tong University</h3>
+                            <p>B.S in Electrical and Computer Engineering</p>
+                            <p>Shanghai, China</p>
+                            <p><em>August 2018</em> – <em>August 2022</em></p>
+                        </li>
+                        <li>
+                            <h3>University of Adelaide</h3>
+                            <p>Study Abroad Program</p>
+                            <p>Adelaide, Australia</p>
+                            <p><em>January 2020</em> – <em>March 2020</em></p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section collapsible-section">
+                <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="research-content">
+                    <h2>Research Interests</h2>
+                </div>
+                <div id="research-content" class="collapsible-content">
+                    <ul>
+                        <li>Time series forecasting</li>
+                        <li>Uncertainty quantification</li>
+                        <li>AI domain</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section collapsible-section">
+                <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="hobbies-content">
+                    <h2>Hobbies</h2>
+                </div>
+                <div id="hobbies-content" class="collapsible-content">
+                    <ul>
+                        <li>
+                            <strong>Badminton:</strong> I regularly play at the North Campus Recreational Building. I recently participated in the UOFM OPEN Spring 2025 tournament, where I achieved runner-up in Men's Doubles - B and was the winner in Mixed Doubles - D.
+                        </li>
+                        <li>
+                            <strong>Photography:</strong> I enjoy capturing moments using my Fujifilm X-S20 and Nikon Z5ii. While I'm still developing my skills, I have a particular interest in street photography and landscape photography. You can view some of my work on my <a href="https://your-photography-website.com" target="_blank">photography website</a>.
+                        </li>
+                        <li>
+                            <strong>Anime:</strong> I am an avid anime fan. You can explore my watch list and reviews on my <a href="https://your-anime-website.com" target="_blank">anime website</a>.
+                        </li>
+                        <li>
+                            <strong>Video Games:</strong> My current favorites include Counter-Strike 2 (CS2), Mount & Blade, Stardew Valley, and various Nintendo Switch titles like The Legend of Zelda series.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section transparent-section">
+                <h2>Contact</h2>
+                <p>Email: <a href="mailto:liruipu@umich.edu">liruipu@umich.edu</a></p>
+                <p>GitHub: <a href="https://github.com/RRremixx" target="_blank">https://github.com/RRremixx</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Smooth page load
+            document.body.classList.remove('loading');
+            document.body.classList.add('loaded');
+
+            // Collapsible section logic
+            document.querySelectorAll('.collapsible-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = document.getElementById(header.getAttribute('aria-controls'));
+                    const isExpanded = header.getAttribute('aria-expanded') === 'true';
+
+                    header.setAttribute('aria-expanded', !isExpanded);
+                    content.classList.toggle('expanded');
+
+                    if (!isExpanded) {
+                        content.style.maxHeight = content.scrollHeight + "px"; // Expand to full height
+                    } else {
+                        content.style.maxHeight = null; // Collapse
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
