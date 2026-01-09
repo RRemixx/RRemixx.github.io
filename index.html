@@ -1,31 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ruipu Li's Homepage</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
 </head>
+
 <body class="loading">
     <div class="container">
+        <!-- Sidebar -->
         <div class="sidebar">
             <div class="profile-pic">
-                <img src="images/profile.jpg" alt="Ruipu Li" class="profile-img">
-                </div>
+                <img src="images/profile.jpg" alt="Ruipu Li" class="profile-img" />
+            </div>
+
             <h1>Ruipu Li's Homepage</h1>
-            <p>I am a Ph.D. student in Computer Science and Engineering at the University of Michigan, where I also serve as a Graduate Student Research Assistant (GSRA).</p>
-            <p>My research centers on Artificial Intelligence, with a strong focus on time series forecasting and uncertainty quantification. I am currently advised by <a href="mailto:alrodri@umich.edu">Prof. Rodriguez (alrodri@umich.edu)</a> and previously conducted research under <a href="mailto:penner@umich.edu">Prof. Penner (penner@umich.edu)</a>. You can find my CV here: <a href="your_cv.pdf" target="_blank">CV</a></p>
+
+            <p>
+                I am a Ph.D. student in Computer Science at the University of Michigan (Ann Arbor).
+            </p>
+
+            <p>
+                My research focuses on time series forecasting and uncertainty quantification, with an emphasis on
+                conformal prediction and online calibration for real-world forecasting systems.
+                I am currently advised by
+                <a href="mailto:alrodri@umich.edu">Prof. Alexander Rodríguez (alrodri@umich.edu)</a>.
+            </p>
+
+            <p>
+                You can find my CV here:
+                <a href="CV.pdf" target="_blank" rel="noopener noreferrer">CV</a>
+            </p>
 
             <div class="contact-in-sidebar">
                 <h2>Contact</h2>
                 <p>Email: <a href="mailto:liruipu@umich.edu">liruipu@umich.edu</a></p>
-                <p>GitHub: <a href="https://github.com/RRremixx" target="_blank">https://github.com/RRremixx</a></p>
+                <p>GitHub: <a href="https://github.com/RRremixx" target="_blank" rel="noopener noreferrer">https://github.com/RRremixx</a></p>
+                <p>Phone: +1 734-604-3832</p>
+                <p>Location: Ann Arbor, MI</p>
             </div>
         </div>
+
+        <!-- Main Content -->
         <div class="main-content">
+
+            <!-- Publications -->
+            <div class="section collapsible-section">
+                <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="pubs-content">
+                    <h2>Publications</h2>
+                </div>
+                <div id="pubs-content" class="collapsible-content">
+                    <ul>
+                        <li>
+                            <p>
+                                <strong>Neural Conformal Control for Time Series Forecasting</strong><br />
+                                Ruipu Li, Alexander Rodríguez<br />
+                                <em>Proceedings of the 39th AAAI Conference on Artificial Intelligence (AAAI 2025)</em>, 2025.
+                            </p>
+                            <p>
+                                A neural-network-based conformal framework for non-stationary time series that treats the model
+                                as a controller to achieve target coverage with asymptotic coverage guarantees.
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                <strong>Adaptive Conformal Prediction Intervals Over Trajectory Ensembles</strong><br />
+                                Ruipu Li, Diego Menacho, Alexander Rodríguez<br />
+                                <em>arXiv preprint</em>, 2025. <em>(In progress)</em>
+                            </p>
+                            <p>
+                                A unified conformal approach that transforms sampled trajectory ensembles into calibrated prediction
+                                intervals, with an online update step and a trajectory-level optimization step.
+                            </p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Projects -->
+            <div class="section collapsible-section">
+                <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="projects-content">
+                    <h2>Projects</h2>
+                </div>
+                <div id="projects-content" class="collapsible-content">
+                    <ul>
+                        <li>
+                            <h3>CDC FluSight Forecasting Challenge</h3>
+                            <p><strong>Team Lead</strong>, UM-DeepOutBreak — <em>July 2023</em> – <em>Present</em></p>
+                            <ul>
+                                <li>Top-3 accuracy (MAE) out of ~40 teams in the 2023–2024 CDC FluSight challenge.</li>
+                                <li>Weekly real-time probabilistic forecasts feeding into operational CDC ensemble models.</li>
+                                <li>End-to-end automated pipeline (data ingest → preprocessing → ensembling Seq2Seq + diffusion models).</li>
+                                <li>Conformal prediction methods for calibrated multi-step uncertainty estimates.</li>
+                                <li>Mentoring on MLOps best practices, deployment, and pipeline design.</li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>Michigan Infectious Disease Modeling (MICOM)</h3>
+                            <p><strong>Researcher</strong>, Michigan Public Health Integrated Center for Outbreak Analytics and Modeling — <em>January 2025</em> – <em>Present</em></p>
+                            <ul>
+                                <li>Adapt national-scale forecasting models for county-level forecasting in Michigan.</li>
+                                <li>Postprocessing pipeline to aggregate multiple models and compute standardized metrics for comparison/selection.</li>
+                                <li>Cluster deployment enabling automated weekly runs and submissions.</li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>Reliable Uncertainty Cones for Cyclone Trajectory Prediction</h3>
+                            <p>Collaboration with Google DeepMind WeatherLab — <em>October 2025</em> – <em>Present</em></p>
+                            <ul>
+                                <li>Apply CP-Traj to ensemble cyclone forecasts to construct multi-step prediction sets with long-term coverage guarantees.</li>
+                                <li>Empirical evaluation showing coverage close to nominal 95% while existing cones under-cover at several horizons.</li>
+                                <li>Coordinate larger-ensemble experiments and potential integration into future probabilistic products.</li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>ML for Aerosol–Cloud Uncertainty in Climate Forcing</h3>
+                            <p><strong>Research Assistant</strong>, Climate and Space Sciences and Engineering (UM) — <em>August 2022</em> – <em>August 2024</em></p>
+                            <ul>
+                                <li>Process satellite observations via interpolation and PCA to build aerosol–cloud modeling inputs.</li>
+                                <li>Train/compare ML models predicting aerosol optical depth and cloud droplet number concentration.</li>
+                                <li>Interpret model behavior using feature selection and SHAP.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Internships -->
+            <div class="section collapsible-section">
+                <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="internships-content">
+                    <h2>Internships</h2>
+                </div>
+                <div id="internships-content" class="collapsible-content">
+                    <ul>
+                        <li>
+                            <h3>NIO — Autonomous Driving System, Feature Development Department</h3>
+                            <p><strong>Machine Learning Intern</strong></p>
+                            <p><em>May 2021</em> – <em>August 2021</em></p>
+                            <ul>
+                                <li>Curated and cleaned large-scale road test logs to construct a high-quality dataset for modeling lane-change behavior.</li>
+                                <li>Improved autonomous lane-change decision-making using an LSTM model to predict motion of surrounding vehicles.</li>
+                                <li>Developed Python tooling to streamline road test analysis and integrated the Google Test framework into the feature-app project for automated testing.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Education -->
             <div class="section collapsible-section">
                 <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="education-content">
                     <h2>Education</h2>
@@ -34,25 +167,25 @@
                     <ul>
                         <li>
                             <h3>University of Michigan — Ann Arbor</h3>
-                            <p>Ph.D student in Computer Science and Engineering</p>
+                            <p>Ph.D. Student in Computer Science</p>
                             <p>Ann Arbor, MI</p>
                             <p><em>August 2024</em> – <em>Present</em></p>
                         </li>
                         <li>
                             <h3>University of Michigan — Ann Arbor</h3>
-                            <p>M.S.E in Computer Science</p>
+                            <p>M.S.E. in Computer Science</p>
                             <p>Ann Arbor, MI</p>
                             <p><em>August 2022</em> – <em>April 2024</em></p>
                         </li>
                         <li>
                             <h3>University of Michigan — Ann Arbor</h3>
-                            <p>B.S in Computer Science</p>
+                            <p>B.S. in Computer Science</p>
                             <p>Ann Arbor, MI</p>
                             <p><em>August 2020</em> – <em>April 2022</em></p>
                         </li>
                         <li>
                             <h3>Shanghai Jiao Tong University</h3>
-                            <p>B.S in Electrical and Computer Engineering</p>
+                            <p>B.S. in Electrical and Computer Engineering</p>
                             <p>Shanghai, China</p>
                             <p><em>August 2018</em> – <em>August 2022</em></p>
                         </li>
@@ -66,18 +199,48 @@
                 </div>
             </div>
 
+            <!-- Experience -->
             <div class="section collapsible-section">
-                <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="research-content">
-                    <h2>Research Interests</h2>
+                <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="experience-content">
+                    <h2>Experience</h2>
                 </div>
-                <div id="research-content" class="collapsible-content">
+                <div id="experience-content" class="collapsible-content">
                     <ul>
-                        <li>Time series forecasting</li>
-                        <li>Uncertainty quantification (Conformal Prediction)</li>
+                        <li>
+                            <h3>Graduate Student Instructor (GSI) — EECS 492: Introduction to Artificial Intelligence</h3>
+                            <p><strong>University of Michigan — Ann Arbor</strong></p>
+                            <p><em>January 2026</em> – <em>Present</em></p>
+                            <ul>
+                                <li>Designed and released weekly homework assignments aligned with course learning objectives.</li>
+                                <li>Led discussion sections, clarifying core AI concepts and guiding students through problem-solving exercises.</li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>Shanghai Jiao Tong University Virtual Reality Competition</h3>
+                            <p><strong>Team Member</strong></p>
+                            <p><em>December 2019</em> – <em>January 2020</em></p>
+                            <ul>
+                                <li>Awarded Third Prize for developing a puzzle game using Unity and C#.</li>
+                                <li>Engineered the core gameplay logic for a VR adaptation of Sokoban.</li>
+                                <li>Integrated Oculus hardware SDKs to map controller inputs to 3D object manipulation and scene traversal.</li>
+                            </ul>
+                        </li>
+
+                        <li>
+                            <h3>Virtual Reality Club — Shanghai Jiao Tong University</h3>
+                            <p><strong>Head of Technology Department</strong></p>
+                            <p><em>October 2018</em> – <em>October 2019</em></p>
+                            <ul>
+                                <li>Taught club members the fundamentals of game development with Unity.</li>
+                                <li>Led and contributed to multiple VR game development projects within the club.</li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
 
+            <!-- Hobbies -->
             <div class="section collapsible-section">
                 <div class="collapsible-header" role="button" aria-expanded="false" aria-controls="hobbies-content">
                     <h2>Hobbies</h2>
@@ -85,42 +248,49 @@
                 <div id="hobbies-content" class="collapsible-content">
                     <ul>
                         <li>
-                            <strong>Badminton:</strong> I regularly play at the North Campus Recreational Building. I recently participated in the UOFM OPEN Spring 2025 tournament, where I achieved runner-up in Men's Doubles - B and was the winner in Mixed Doubles - D.
+                            <strong>Badminton:</strong> I regularly play at the North Campus Recreational Building.
+                            Recent results include UofM OPEN Spring 2025 (runner-up, Men's Doubles - B; winner, Mixed Doubles - D)
+                            and UofM OPEN Fall 2025 (Men’s Doubles champion in B group).
                         </li>
                         <li>
-                            <strong>Photography:</strong> I enjoy capturing moments using my Fujifilm X-S20 and Nikon Z5ii. While I'm still developing my skills, I have a particular interest in street photography and landscape photography. You can view some of my work on my <a href="https://liruipu.myportfolio.com/" target="_blank">photography website</a>.
+                            <strong>Photography:</strong> I enjoy street and landscape photography.
+                            You can view some of my work on my
+                            <a href="https://liruipu.myportfolio.com/" target="_blank" rel="noopener noreferrer">photography website</a>.
                         </li>
                         <li>
-                            <strong>Anime:</strong> I am an avid anime fan. You can explore my watch list and reviews on my <a href="https://rremixx.github.io/ACGN/acgn.html" target="_blank">anime website</a>.
+                            <strong>Anime:</strong> You can explore my watch list and reviews on my
+                            <a href="https://rremixx.github.io/ACGN/acgn.html" target="_blank" rel="noopener noreferrer">anime website</a>.
                         </li>
                         <li>
-                            <strong>Video Games:</strong> My current favorites include Counter-Strike 2 (CS2), Mount & Blade, Stardew Valley, and various Nintendo Switch titles like The Legend of Zelda series.
+                            <strong>Video Games:</strong> Current favorites include Counter-Strike 2 (CS2), Mount &amp; Blade,
+                            Stardew Valley, and various Nintendo Switch titles like The Legend of Zelda series.
                         </li>
                     </ul>
                 </div>
             </div>
-        </div>
-    </div>
+
+        </div> <!-- /main-content -->
+    </div> <!-- /container -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener("DOMContentLoaded", () => {
             // Smooth page load
-            document.body.classList.remove('loading');
-            document.body.classList.add('loaded');
+            document.body.classList.remove("loading");
+            document.body.classList.add("loaded");
 
             // Collapsible section logic
-            document.querySelectorAll('.collapsible-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    const content = document.getElementById(header.getAttribute('aria-controls'));
-                    const isExpanded = header.getAttribute('aria-expanded') === 'true';
+            document.querySelectorAll(".collapsible-header").forEach((header) => {
+                header.addEventListener("click", () => {
+                    const content = document.getElementById(header.getAttribute("aria-controls"));
+                    const isExpanded = header.getAttribute("aria-expanded") === "true";
 
-                    header.setAttribute('aria-expanded', !isExpanded);
-                    content.classList.toggle('expanded');
+                    header.setAttribute("aria-expanded", String(!isExpanded));
+                    content.classList.toggle("expanded");
 
                     if (!isExpanded) {
-                        content.style.maxHeight = content.scrollHeight + "px"; // Expand to full height
+                        content.style.maxHeight = content.scrollHeight + "px";
                     } else {
-                        content.style.maxHeight = null; // Collapse
+                        content.style.maxHeight = null;
                     }
                 });
             });
