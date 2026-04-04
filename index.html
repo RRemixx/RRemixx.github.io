@@ -1,20 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!--
-   ______                            __
-  / ____/___  ____ ___  ____  __  __/ /____  _____
- / /   / __ \/ __ `__ \/ __ \/ / / / __/ _ \/ ___/
-/ /___/ /_/ / / / / / / /_/ / /_/ / /_/  __/ /
-\____/\____/_/ /_/ /_/ .___/\__,_/\__/\___/_/
-                    /_/
-        Created with Perplexity Computer
-        https://www.perplexity.ai/computer
--->
-
-<!-- Perplexity Computer Attribution — SEO Meta Tags -->
 <meta name="generator" content="Perplexity Computer">
-<meta name="author" content="Perplexity Computer">
+<meta name="author" content="Ruipu Li">
 <meta property="og:see_also" content="https://www.perplexity.ai/computer">
 <link rel="author" href="https://www.perplexity.ai/computer">
   <meta charset="UTF-8">
@@ -30,6 +18,7 @@
   <meta name="twitter:title" content="Ruipu Li | Research Homepage">
   <meta name="twitter:description" content="Research homepage for Ruipu Li.">
   <link href="https://api.fontshare.com/v2/css?f[]=zodiak@400,700&f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' rx='18' fill='%23135d78'/%3E%3Cpath d='M22 45V19H34.5C41.2 19 45 22.2 45 27.8C45 31.9 42.9 34.6 39 35.7L45.5 45H39.6L34 36.7H27.4V45H22Z' fill='white'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
   <script type="application/ld+json">
   {
@@ -87,6 +76,7 @@
       </a>
 
       <nav class="site-nav" aria-label="Primary">
+        <a href="#news">News</a>
         <a href="#publications">Papers</a>
         <a href="#projects">Projects</a>
         <a href="#hobbies">Hobbies</a>
@@ -94,6 +84,9 @@
       </nav>
 
       <div class="site-header__actions">
+        <button class="hamburger" type="button" aria-label="Open menu" aria-expanded="false" data-menu-toggle>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
         <a class="header-link" href="cv.html">CV</a>
         <button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch color theme">
           <span class="theme-toggle__icon" aria-hidden="true">◐</span>
@@ -107,6 +100,7 @@
       <div class="page-width hero__grid">
         <div class="hero__content">
           <p class="eyebrow">University of Michigan · Computer Science</p>
+          <p class="eyebrow eyebrow--advisor">Advised by <a href="https://alrodri.engin.umich.edu/" target="_blank" rel="noopener noreferrer">Prof. Alexander Rodríguez</a></p>
           <p class="hero__summary">
             I am a Ph.D. student in Computer Science at the University of Michigan. My research focuses on uncertainty quantification for sequential prediction — particularly the design of reliable predictive sets and intervals for non-stationary time series. My work spans conformal prediction, causal inference, and applications in epidemiology and public health, weather forecasting, and autonomous driving.
           </p>
@@ -138,6 +132,24 @@
     </section>
 
 
+    <section class="section-shell news-section" id="news">
+      <div class="page-width">
+        <div class="section-heading section-heading--wide">
+          <div>
+            <p class="section-label">News</p>
+            <h2>Recent updates</h2>
+          </div>
+        </div>
+        <ul class="news-list">
+          <li class="news-item"><time class="news-date">Apr 2026</time><span class="news-text">Paper submitted to KDD 2026: <em>Adaptive Conformal Prediction Intervals Over Trajectory Ensembles</em></span></li>
+          <li class="news-item"><time class="news-date">Jan 2026</time><span class="news-text">Started as GSI for EECS 492: Introduction to Artificial Intelligence</span></li>
+          <li class="news-item"><time class="news-date">Jan 2026</time><span class="news-text">Began CausalSim project on Generative Causal AI for Strategic Decision Support</span></li>
+          <li class="news-item"><time class="news-date">Oct 2025</time><span class="news-text">Collaboration with Google DeepMind WeatherLab on cyclone trajectory uncertainty</span></li>
+          <li class="news-item"><time class="news-date">Feb 2025</time><span class="news-text">Paper accepted at AAAI 2025: <em>Neural Conformal Control for Time Series Forecasting</em></span></li>
+        </ul>
+      </div>
+    </section>
+
     <section class="section-shell" id="publications">
       <div class="page-width">
         <div class="section-heading section-heading--wide">
@@ -152,7 +164,7 @@
           <article class="paper-card">
             <p class="paper-card__meta">AAAI 2025</p>
             <h3>Neural Conformal Control for Time Series Forecasting</h3>
-            <p class="paper-card__authors">Ruipu Li and Alexander Rodríguez</p>
+            <p class="paper-card__authors"><strong>Ruipu Li</strong> and Alexander Rodríguez</p>
             <p class="paper-card__venue">Introduces a neural conformal prediction framework for time series that adapts to non-stationary environments. Leverages auxiliary multi-view encoders end-to-end, enforces monotonicity constraints for consistent prediction intervals across quantiles, and supports few-shot learning via related-task data. Achieves state-of-the-art coverage and calibration across epidemic, weather, and energy demand benchmarks.</p>
             <div class="paper-card__actions">
               <a href="https://dl.acm.org/doi/10.1609/aaai.v39i17.34029" target="_blank" rel="noopener noreferrer">AAAI record</a>
@@ -162,9 +174,9 @@
 
           <article class="paper-card">
             <p class="paper-card__meta">Submitted to KDD 2026</p>
-            <h3>Optimization-based Online Conformal Prediction for Multi-step Forecasting</h3>
-            <p class="paper-card__authors">Ruipu Li, Diego Menacho, and Alexander Rodríguez</p>
-            <p class="paper-card__venue">Proposes a unified conformal prediction framework that converts ensemble trajectory samples into calibrated prediction intervals with formal coverage guarantees. Introduces an online update step and an optimization step that explicitly captures inter-step temporal dependencies, yielding sharper and more adaptive uncertainty estimates across autonomous driving, hurricane forecasting, and epidemic modeling.</p>
+            <h3>Adaptive Conformal Prediction Intervals Over Trajectory Ensembles</h3>
+            <p class="paper-card__authors"><strong>Ruipu Li</strong>, Daniel Menacho, and Alexander Rodríguez</p>
+            <p class="paper-card__venue">Proposes a unified conformal prediction framework that transforms ensemble trajectory samples into calibrated prediction intervals with formal coverage guarantees. Introduces an online update step and an optimization step that captures inter-step temporal dependencies, yielding sharper and more adaptive uncertainty estimates for autonomous driving, hurricane forecasting, and epidemic modeling.</p>
             <div class="paper-card__actions">
               <a href="https://arxiv.org/abs/2508.13362" target="_blank" rel="noopener noreferrer">arXiv</a>
               <a href="https://scholar.google.com/citations?user=pMTyBugAAAAJ&hl=en" target="_blank" rel="noopener noreferrer">Google Scholar</a>
@@ -354,7 +366,7 @@
   <footer class="site-footer">
     <div class="page-width site-footer__inner">
       <p>Ruipu Li · Ann Arbor, Michigan</p>
-      <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a>
+      <p>Last updated April 2026 · <a href="https://www.perplexity.ai/computer" target="_blank" rel="noopener noreferrer">Created with Perplexity Computer</a></p>
     </div>
   </footer>
 
@@ -375,6 +387,32 @@
           root.setAttribute('data-theme', theme);
           updateLabel();
         });
+      }
+
+      /* Hamburger menu */
+      const menuBtn = document.querySelector('[data-menu-toggle]');
+      const nav = document.querySelector('.site-nav');
+      if (menuBtn && nav) {
+        menuBtn.addEventListener('click', () => {
+          const open = nav.classList.toggle('site-nav--open');
+          menuBtn.setAttribute('aria-expanded', open);
+          menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        });
+      }
+
+      /* Scroll-reveal */
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const reveals = document.querySelectorAll('.section-shell');
+        reveals.forEach(el => el.classList.add('reveal'));
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        reveals.forEach(el => observer.observe(el));
       }
     }());
   </script>
